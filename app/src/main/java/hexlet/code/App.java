@@ -38,8 +38,8 @@ public class App {
             if (!isProduction()) {
                 config.plugins.enableDevLogging();
             }
+            config.staticFiles.enableWebjars();
             JavalinThymeleaf.init(getTemplateEngine());
-
         });
 
         addRoutes(app);
@@ -50,22 +50,22 @@ public class App {
     private static void addRoutes(Javalin app) {
         app.get("/", ctx -> {
 //            ctx.result("Hello World");
-            ctx.render("./src/main/resources/templates/index.html");
+            ctx.render("index.html");
         });
     }
 
 
     private static TemplateEngine getTemplateEngine() {
-        // Создаём инстанс движка шаблонизатора
+
         TemplateEngine templateEngine = new TemplateEngine();
-        // Добавляем к нему диалекты
+
         templateEngine.addDialect(new LayoutDialect());
         templateEngine.addDialect(new Java8TimeDialect());
-        // Настраиваем преобразователь шаблонов, так, чтобы обрабатывались
-        // шаблоны в директории /templates/
+
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setPrefix("/templates/");
-        // Добавляем преобразователь шаблонов к движку шаблонизатора
+        templateResolver.setCharacterEncoding("UTF-8");
+
         templateEngine.addTemplateResolver(templateResolver);
 
         return templateEngine;

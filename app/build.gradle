@@ -15,6 +15,7 @@ repositories {
     mavenCentral()
 }
 
+
 //dependencies {
 //    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
 //    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
@@ -79,6 +80,7 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    systemProperty "file.encoding", "utf-8"
 }
 
 java {
@@ -104,4 +106,9 @@ application {
 task generateMigrations(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'hexlet.code.MigrationGenerator'
+}
+
+compileJava {
+    options.release = 17
+    options.encoding = 'UTF-8'
 }
