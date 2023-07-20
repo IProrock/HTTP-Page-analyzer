@@ -65,7 +65,7 @@ dependencies {
     implementation 'io.ebean:ebean-querybean:12.15.1'
     implementation 'io.ebean:ebean-migration:13.7.0'
     implementation 'io.ebean:ebean-annotation:8.3'
-    annotationProcessor 'io.ebean:querybean-generator:13.15.0'
+    annotationProcessor 'io.ebean:querybean-generator:13.6.5'
 
     // NOTE: ebean-ddl-generator требует старые зависимости, которых нет в java 9 и выше
     implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.5'
@@ -112,5 +112,3 @@ compileJava {
     options.release = 17
     options.encoding = 'UTF-8'
 }
-
-sourceSets.main.java.srcDirs = ['src/main/java', 'build/generated/sources/annotationProcessor/java/main']

@@ -1,17 +1,17 @@
 package hexlet.code;
 
 import io.javalin.Javalin;
-import io.javalin.rendering.JavalinRenderer;
-import io.javalin.rendering.markdown.JavalinCommonmark;
 import io.javalin.rendering.template.JavalinThymeleaf;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
-import org.thymeleaf.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import org.thymeleaf.TemplateEngine;
 
 public class App {
+    private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) {
         int port = getPort();
@@ -49,9 +49,11 @@ public class App {
 
     private static void addRoutes(Javalin app) {
         app.get("/", ctx -> {
-//            ctx.result("Hello World");
             ctx.render("index.html");
         });
+        app.get("/urls", Controllers.printUrls);
+        app.post("/urls", Controllers.addUrl);
+        app.get("/urls/{id}", Controllers.showId);
     }
 
 

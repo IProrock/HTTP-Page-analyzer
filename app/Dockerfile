@@ -1,5 +1,7 @@
 FROM gradle:7.4.0-jdk17
 
+ENV APP_ENV=production
+
 WORKDIR /app
 
 COPY . /app
