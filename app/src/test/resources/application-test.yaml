@@ -1,0 +1,14 @@
+ebean:
+  test:
+    useDocker: false
+    platform: h2
+    ddlMode: dropCreate
+    dbName: test_db
+    h2:
+      username: "tst"
+      password: "tst"
+      url: "jdbc:h2:./testdatabase"
+  ddl:
+    run: true
+    generate: true
+    seedSql: seed.sql

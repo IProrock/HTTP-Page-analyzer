@@ -24,7 +24,7 @@ public class App {
         return System.getenv().getOrDefault("APP_ENV", "development");
     }
 
-    private static int getPort() {
+    public static int getPort() {
         String port = System.getenv().getOrDefault("PORT", "8000");
         return Integer.valueOf(port);
     }
@@ -33,7 +33,7 @@ public class App {
         return getMode().equals("production");
     }
 
-    private static Javalin getApp() {
+    public static Javalin getApp() {
         Javalin app = Javalin.create(config -> {
             if (!isProduction()) {
                 config.plugins.enableDevLogging();
