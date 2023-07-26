@@ -1,0 +1,1 @@
+DELETE FROM url WHERE id > 2;

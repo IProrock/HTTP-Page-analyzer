@@ -51,9 +51,11 @@ public class App {
         app.get("/", ctx -> {
             ctx.render("index.html");
         });
+
         app.get("/urls", Controllers.printUrls);
         app.post("/urls", Controllers.addUrl);
         app.get("/urls/{id}", Controllers.showId);
+        app.post("/urls/{id}/checks", Controllers.urlCheckRequest);
     }
 
 

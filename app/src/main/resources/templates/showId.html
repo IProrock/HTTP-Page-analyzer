@@ -28,6 +28,11 @@
 </nav>
 
 <main>
+  <div th:if="${session.flash != null}">
+      <div class="alert alert-danger" role="alert">
+        <span th:text="${session.flash}" bgcolor="red"> </span>
+      </div>
+  </div>
 
   <div class="container-xxl">
     <h1 th:text="'Сайт ' + ${session.url.getName()}">Сайт http://...</h1>
@@ -46,6 +51,34 @@
       </tr>
     </table>
   </div>
+
+  <div class="container-xxl">
+    <h1 th:text="Проверки">Проверки</h1>
+    <form method="post" th:action="'/urls/' + ${session.url.getId()} + '/checks'">
+      <button type="submit" class="h-100 btn btn-lg btn-primary mb-2">Запустить проверку</button>
+    </form>
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Код ответа</th>
+        <th>title</th>
+        <th>h1</th>
+        <th>description</th>
+        <th>Дата проверки</th>
+      </tr>
+      </thead>
+      <tr th:each="urlCheck : ${session.url.getUrlChecks()}">
+        <td th:text="${urlCheck.id}">def id</td>
+        <td th:text="${urlCheck.statusCode}">def status code</td>
+        <td th:text="${urlCheck.title}">def title</td>
+        <td th:text="${urlCheck.h1}">def h1</td>
+        <td th:text="${urlCheck.description}">def description</td>
+        <td th:text="*{#temporals.format(urlCheck.getCreatedAt(), 'dd/MM/yy HH:mm')}">def last checked</td>
+      </tr>
+    </table>
+  </div>
+
 </main>
 
 </body>

@@ -43,9 +43,11 @@
         </thead>
         <tr th:each="url : ${session.urls}">
             <td th:text="${url.id}">def id</td>
-            <td th:text="${url.name}">def name</td>
-            <td th:text="*{#temporals.format(url.getCreatedAt(), 'dd/MM/yy HH:mm')}">def last checked</td>
-            <td th:text="not defined">def feedback code</td>
+            <td>
+                <a th:text="${url.name}" th:href="'/urls/' + ${url.getId()}">def name</a>
+            </td>
+            <td th:text="*{#temporals.format(url.getLatestCheck(), 'dd/MM/yy HH:mm')}">def last checked</td>
+            <td th:text="${url.getLatestStatus()}">def feedback code</td>
         </tr>
     </table>
 </div>
