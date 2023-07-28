@@ -10,6 +10,9 @@ import java.util.List;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,16 +96,31 @@ public class Controllers {
         Url urlToCheck = new QUrl()
                 .id.equalTo(idUrl)
                 .findOne();
-        String urlName = urlToCheck.getName();
-        List<UrlCheck> listOfChecks = urlToCheck.getUrlChecks();
+
 
         try {
+            LOGGER.info("Controllers.urlChechReques - HTTP request by Unirest started");
             HttpResponse<String> response = Unirest.get(urlToCheck.getName()).asString();
             int statusCode = response.getStatus();
-            UrlCheck urlCheckAdd = new UrlCheck(statusCode, "Title", "h1", "Desc", urlToCheck);
+            String body = response.getBody();
+            Document doc = Jsoup.parse(body);
+
+            String title = doc.title();
+            LOGGER.info("Controllers.urlCheckRequest - parsed title: " + title);
+
+            Element h1Elm = doc.select("h1").first();
+            String h1str = (h1Elm == null ? "h1 tag missing" : h1Elm.text());
+            LOGGER.info("Controllers.urlCheckRequest - parsed h1 tag: " + h1str);
+
+            Element descElm = doc.select("meta[name=description]").first();
+            String descStr = (descElm == null ? "No description" : descElm.attr("content"));
+            LOGGER.info("Controllers.urlCheckRequest - parsed description: " + descStr);
+
+            UrlCheck urlCheckAdd = new UrlCheck(statusCode, title, h1str, descStr, urlToCheck);
             urlCheckAdd.save();
 
         } catch (Exception e) {
+            LOGGER.info("Controllers.urlCheckRequest - Exception catched: " + e.toString());
             ctx.sessionAttribute("flash", "Не удалось проверить страницу, проверьте правильность URL");
         }
 

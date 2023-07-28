@@ -14,7 +14,9 @@ public class App {
     private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) {
+        LOGGER.info("App.main entered");
         int port = getPort();
+        LOGGER.info("App.main port received: " + port);
         Javalin app = getApp();
 
         app.start(port);
@@ -25,11 +27,13 @@ public class App {
     }
 
     public static int getPort() {
+        LOGGER.info("App.getPort entered");
         String port = System.getenv().getOrDefault("PORT", "8000");
         return Integer.valueOf(port);
     }
 
     private static boolean isProduction() {
+        LOGGER.info("App.isProduction entered");
         return getMode().equals("production");
     }
 

@@ -1,8 +1,6 @@
 package hexlet.code;
 
 import io.ebean.Database;
-//import io.ebean.Transaction;
-//import io.ebean.annotation.Transactional;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
@@ -13,14 +11,16 @@ import io.ebean.DB;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+
 import java.io.IOException;
-import java.time.Instant;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,31 +29,38 @@ public class MainTest {
     private static String baseUrl;
     private static Database database;
     private static MockWebServer server;
-    private static Instant today;
+    private static String mockUrl;
 
 
 
     @BeforeAll
     public static void prepareAll() throws IOException {
+
         app = App.getApp();
         app.start();
         int port = app.port();
         baseUrl = "http://localhost:" + port;
         Unirest.config().defaultBaseUrl(baseUrl);
         database = DB.getDefault();
+
+        String dummyHtml = Files.readString(Path.of("src/test/resources/dummy.html"));
+
         server = new MockWebServer();
-        server.enqueue(new MockResponse()
-                .setBody("mocked yandex.ru"));
+        server.enqueue(new MockResponse().setBody(dummyHtml));
         server.start();
+        mockUrl = server.url("/").toString();
 
-        // Fill [url] DB with 2 rows [id=1] and [id=2]
+    }
+
+    @BeforeEach
+    public void fillDB() {
+        // Fill [url] DB with 2 rows [id=1 yandex.ru] and [id=2 fontanka.ru]
         database.script().run("/seed.sql");
-
     }
 
     @AfterEach
     public void revertEach() {
-        // Remove all data with [id>2]
+        // Remove all data from DB:[url] with [id>2]
         database.script().run("/clearseed.sql");
     }
 
@@ -103,29 +110,15 @@ public class MainTest {
 
     @Test
     public void checksPostTest() {
-        // POST [/urls/1/checks] - should start checking [http://yandex.ru] with mock
-        HttpResponse response = Unirest.post("/urls/1/checks")
+
+        //Adding mockedURL to list before check
+        HttpResponse response = Unirest.post("/urls")
+                .field("url", mockUrl)
                 .asEmpty();
-
-        //GET [/urls] - list of URL verification. Table will have 2 rows.
-        HttpResponse<String> getResponse = Unirest.get("/urls").asString();
-        //Checking that [200] is present. (Should be added after POST request)
-        assertThat(getResponse.getBody()).contains("200");
-        assertThat(getResponse.getBody()).contains("yandex");
-        assertThat(getResponse.getStatus()).isEqualTo(200);
-
-        //GET [/urls/1] - personal page for [yandex.ru] record
-        getResponse = Unirest.get("/urls/1").asString();
-        assertThat(getResponse.getBody()).contains("yandex");
-        //Check that [200] is present (should be added after POST request)
-        assertThat(getResponse.getBody()).contains("200");
-        assertThat(getResponse.getStatus()).isEqualTo(200);
-
-        //GET [/urls/2] - personal page for [fontanka.ru] record
-        getResponse = Unirest.get("/urls/2").asString();
-        assertThat(getResponse.getBody()).contains("fontanka");
-        //Check that page DO NOT contain [200] (POST request was not done)
-        assertThat(getResponse.getBody()).doesNotContain("200");
-        assertThat(getResponse.getStatus()).isEqualTo(200);
+        response = Unirest.post("/urls/3/checks")
+                .asEmpty();
+        HttpResponse<String> getResponse = Unirest.get("/urls/3").asString();
+        assertThat(getResponse.getBody()).contains("dummy h1");
+        assertThat(getResponse.getBody()).contains("dummy description");
     }
 }
