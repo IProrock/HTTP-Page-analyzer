@@ -24,7 +24,7 @@ import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MainTest {
+public final class MainTest {
     private static Javalin app;
     private static String baseUrl;
     private static Database database;

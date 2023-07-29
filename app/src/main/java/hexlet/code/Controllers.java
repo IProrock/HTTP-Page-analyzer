@@ -119,11 +119,12 @@ public class Controllers {
             UrlCheck urlCheckAdd = new UrlCheck(statusCode, title, h1str, descStr, urlToCheck);
             urlCheckAdd.save();
 
+            ctx.sessionAttribute("flash", "Страница успешно проверена");
+
         } catch (Exception e) {
             LOGGER.info("Controllers.urlCheckRequest - Exception catched: " + e.toString());
             ctx.sessionAttribute("flash", "Не удалось проверить страницу, проверьте правильность URL");
         }
-
 
         ctx.redirect("/urls/" + idUrl);
 
