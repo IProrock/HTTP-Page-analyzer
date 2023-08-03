@@ -20,8 +20,9 @@ public class Controllers {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Controllers.class);
 
+    //POST [/urls]
     public static Handler addUrl = ctx -> {
-        //POST [/urls]
+
 
         String urlString = ctx.formParam("url");
         URL urlInstance = null;
@@ -55,8 +56,9 @@ public class Controllers {
         ctx.redirect("/urls");
     };
 
+    //GET [/urls]
     public static Handler printUrls = ctx -> {
-        //GET [/urls]
+
         LOGGER.info("Controllers.printUrls entered");
 
         List<Url> printList = new QUrl()
@@ -68,8 +70,9 @@ public class Controllers {
         ctx.render("urls.html");
     };
 
+    //GET [/urls/{id}]
     public static Handler showId = ctx -> {
-        //GET [/urls/{id}]
+
         LOGGER.info("Controllers.showId entered");
 
         Long id = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
@@ -88,8 +91,9 @@ public class Controllers {
         ctx.render("showId.html");
     };
 
+    //POST [/urls/{id}/checks]
     public static Handler urlCheckRequest = ctx -> {
-        //POST [/urls/{id}/checks]
+
         LOGGER.info("Controllers.urlCheckRequest entered");
 
         long idUrl = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
