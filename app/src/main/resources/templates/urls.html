@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" xmlns:layout="https://www.thymeleaf.org/"
+      layout:decorate="~{layouts/layout.html}">
 <head>
     <meta charset="UTF-8">
     <title>Анализатор страниц</title>
@@ -8,24 +9,7 @@
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark navbar-light bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">Анализатор страниц</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/">Главная</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/urls">Сайты</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<section layout:fragment="content">
 <div class="container-fluid">
     <div th:if="${session.flash != null}">
         <div class="alert alert-success" role="alert">
@@ -51,5 +35,6 @@
         </tr>
     </table>
 </div>
+</section>
 </body>
 </html>

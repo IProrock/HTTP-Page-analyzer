@@ -89,7 +89,7 @@ public final class MainTest {
 
         //GET page of [id=3] should be error as only 2 rows were added be seed.sql
         response = Unirest.get("/urls/3").asString();
-        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.getStatus()).isEqualTo(404);
 
     }
 

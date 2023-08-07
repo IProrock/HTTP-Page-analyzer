@@ -56,10 +56,10 @@ public class App {
             ctx.render("index.html");
         });
 
-        app.get("/urls", Controllers.printUrls);
-        app.post("/urls", Controllers.addUrl);
-        app.get("/urls/{id}", Controllers.showId);
-        app.post("/urls/{id}/checks", Controllers.urlCheckRequest);
+        app.get("/urls", UrlController.printUrls);
+        app.post("/urls", UrlController.addUrl);
+        app.get("/urls/{id}", UrlController.showId);
+        app.post("/urls/{id}/checks", UrlController.urlCheckRequest);
     }
 
 
