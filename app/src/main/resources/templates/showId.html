@@ -11,11 +11,6 @@
 <body>
 <section layout:fragment="content">
 <main>
-  <div th:if="${session.flash != null}">
-      <div class="alert alert-danger" role="alert">
-        <span th:text="${session.flash}" bgcolor="red"> </span>
-      </div>
-  </div>
 
   <div class="container-xxl">
     <h1 th:text="'Сайт ' + ${session.url.getName()}">Сайт http://...</h1>

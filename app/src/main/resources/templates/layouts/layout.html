@@ -26,6 +26,14 @@
     </div>
   </div>
 </nav>
+  <div th:if="${session.flash != null}">
+    <div id="liveAlertPlaceholder">
+      <div th:class="'alert alert-' + ${ctx.consumeSessionAttribute('flashType')} + ' alert-dismissible mb-0'" role="alert">
+        <span th:text="${ctx.consumeSessionAttribute('flash')}" bgcolor="red"> </span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
   <section layout:fragment="content"></section>
 </div>
 </body>

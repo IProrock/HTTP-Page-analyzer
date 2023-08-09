@@ -11,11 +11,6 @@
 <body>
 <section layout:fragment="content">
 <div class="container-fluid">
-    <div th:if="${session.flash != null}">
-        <div class="alert alert-success" role="alert">
-            <span th:text="${session.flash}" bgcolor="red"> </span>
-        </div>
-    </div>
     <table class="table table-bordered">
         <thead>
             <tr>

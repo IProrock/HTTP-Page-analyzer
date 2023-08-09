@@ -16,11 +16,6 @@
             <div class="col-md-10 col-lg-8 mx-auto text-white">
                 <h1 class="display-3 mb-0">Анализатор страниц</h1>
                 <p class="lead">Бесплатно проверяйте сайты на SEO пригодность</p>
-                <div th:if="${session.flash != null}">
-                    <div class="alert alert-danger" role="alert">
-                        <span th:text="${session.flash}" bgcolor="red"> </span>
-                    </div>
-                </div>
 
                 <form action="/urls" method="post" class="rss-form text-body">
                     <div class="row">

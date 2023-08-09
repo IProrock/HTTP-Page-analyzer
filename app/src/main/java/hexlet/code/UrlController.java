@@ -28,24 +28,27 @@ public class UrlController {
 
         String urlString = ctx.formParam("url");
         URL urlInstance = null;
-        String urlToAdd = null;
 
         try {
             LOGGER.info("try to parse url string {}", urlString);
             urlInstance = new URL(urlString);
-            urlToAdd = urlInstance.getProtocol() + "://" + urlInstance.getAuthority();
+
         } catch (Exception e) {
             LOGGER.error("Could not parse URL String: {}", urlString);
             ctx.sessionAttribute("flash", "Некорректный URL");
+            ctx.sessionAttribute("flashType", "danger");
             ctx.redirect("/");
             return;
         }
+
+        String urlToAdd = urlInstance.getProtocol() + "://" + urlInstance.getAuthority();
 
         LOGGER.info("Check if URL already exists {}", urlToAdd);
 
         if (isAlreadyExists(urlToAdd)) {
             LOGGER.info("URL Already exists: '{}'", urlToAdd);
             ctx.sessionAttribute("flash", "Страница уже существует");
+            ctx.sessionAttribute("flashType", "danger");
             ctx.redirect("/");
             return;
         }
@@ -54,6 +57,7 @@ public class UrlController {
         Url nurl = new Url(urlToAdd);
         nurl.save();
         ctx.sessionAttribute("flash", "Страница успешно добавлена");
+        ctx.sessionAttribute("flashType", "success");
 
         ctx.redirect("/urls");
     };
@@ -124,13 +128,14 @@ public class UrlController {
             urlCheckAdd.save();
 
             ctx.sessionAttribute("flash", "Страница успешно проверена");
+            ctx.sessionAttribute("flashType", "success");
 
         } catch (UnirestException e) {
             ctx.sessionAttribute("flash", "Некорректный адрес");
-//            ctx.sessionAttribute("flash-type", "danger");
+            ctx.sessionAttribute("flashType", "danger");
         } catch (Exception e) {
             ctx.sessionAttribute("flash", e.getMessage());
-//            ctx.sessionAttribute("flash-type", "danger");
+            ctx.sessionAttribute("flashType", "danger");
         }
 
 
