@@ -2,10 +2,15 @@ package hexlet.code;
 
 import hexlet.code.domain.Url;
 import hexlet.code.domain.UrlCheck;
+import hexlet.code.domain.query.QUrlCheck;
+import io.ebean.PagedList;
 import io.javalin.http.Handler;
 import hexlet.code.domain.query.QUrl;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 import io.javalin.http.NotFoundResponse;
@@ -65,13 +70,42 @@ public class UrlController {
     //GET [/urls]
     public static Handler printUrls = ctx -> {
 
-        LOGGER.info("Controllers.printUrls entered");
+        LOGGER.info("UrlController.printUrls entered");
 
-        List<Url> printList = new QUrl()
+        int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1) - 1;
+        int rowsPerPage = 10;
+
+        PagedList<Url> pagedUrls = new QUrl()
+                .setFirstRow(page * rowsPerPage)
+                .setMaxRows(rowsPerPage)
                 .id.isNotNull()
-                .findList();
+                .findPagedList();
 
-        ctx.sessionAttribute("urls", printList);
+        List<Url> printList = pagedUrls.getList();
+
+        LOGGER.info("UrlController.printURLS url list:\n" + printList.toString());
+
+        Map<Long, UrlCheck> urlChecks = new QUrlCheck()
+                .url.id.asMapKey()
+                        .orderBy().createdAt.desc()
+                        .findMap();
+
+        LOGGER.info("UrlController.printURLS urlChecks Map:\n" + urlChecks.toString());
+
+        int lastPage = pagedUrls.getTotalPageCount() + 1;
+        int currentPage = pagedUrls.getPageIndex() + 1;
+        List<Integer> pages = IntStream
+                .range(1, lastPage)
+                .boxed()
+                .collect(Collectors.toList());
+
+        ctx.attribute("urls", printList);
+        ctx.attribute("urlChecks", urlChecks);
+        ctx.attribute("pages", pages);
+
+        LOGGER.info("UrlController.printURLS current page: " + currentPage);
+        ctx.attribute("currentPage", currentPage);
+
 
         ctx.render("urls.html");
     };

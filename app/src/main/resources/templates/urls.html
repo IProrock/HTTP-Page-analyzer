@@ -20,16 +20,37 @@
                 <th>Код ответа</th>
             </tr>
         </thead>
-        <tr th:each="url : ${session.urls}">
-            <td th:text="${url.id}">def id</td>
+        <tr th:each="url : ${urls}">
+            <td th:text="${url.id}">URL id</td>
             <td>
-                <a th:text="${url.name}" th:href="'/urls/' + ${url.getId()}">def name</a>
+                <a th:text="${url.name}" th:href="'/urls/' + ${url.getId()}">name</a>
             </td>
-            <td th:text="*{#temporals.format(url.getLatestCheck(), 'dd/MM/yy HH:mm')}">def last checked</td>
-            <td th:text="${url.getLatestStatus()}">def feedback code</td>
+            <td>
+                <div th:if="${urlChecks.get(url.getId()) != null}">
+                    <div th:text="*{#temporals.format(urlChecks.get(url.getId()).getCreatedAt(), 'dd/MM/yy HH:mm')}">Latest check date or null</div>
+                </div>
+            </td>
+            <td>
+                <div th:if="${urlChecks.get(url.getId()) != null}">
+                    <div th:text="${(urlChecks.get(url.getId())).getStatusCode()}">Status Code or null</div>
+                </div>
+            </td>
         </tr>
     </table>
 </div>
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li th:class="'page-item' + ${currentPage <= 1 ? ' disabled' : ' '}">
+                <a class="page-link" th:href="@{/urls(page=${currentPage - 1})}">Previous</a>
+            </li>
+            <li th:each="page : ${pages}" th:class="'page-item' + ${currentPage == page ? ' disabled' : ''}">
+                <a class="page-link" th:href="@{/urls(page=${page})}" th:text="${page}">page</a>
+            </li>
+            <li th:class="'page-item' + ${currentPage >= pages.size() ? ' disabled' : ' '}">
+                <a class="page-link" th:href="@{/urls(page=${currentPage + 1})}">Next</a>
+            </li>
+        </ul>
+    </nav>
 </section>
 </body>
 </html>

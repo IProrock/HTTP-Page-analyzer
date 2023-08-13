@@ -54,13 +54,13 @@ public final class MainTest {
 
     @BeforeEach
     public void fillDB() {
-        // Fill [url] DB with 2 rows [id=1 yandex.ru] and [id=2 fontanka.ru]
+        // Fill [url] DB with 2 rows [#1 yandex.ru] and [#2 fontanka.ru]
         database.script().run("/seed.sql");
     }
 
     @AfterEach
     public void revertEach() {
-        // Remove all data from DB:[url] with [id>2]
+        // DROP DB Tables IF EXISTS
         database.script().run("/clearseed.sql");
     }
 
@@ -81,6 +81,8 @@ public final class MainTest {
         response = Unirest.get("/urls").asString();
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getBody()).contains("Последняя");
+        assertThat(response.getBody()).contains("yandex");
+        assertThat(response.getBody()).contains("fontanka");
 
         //GET page of [id=1] should be [yandex.ru]
         response = Unirest.get("/urls/1").asString();
