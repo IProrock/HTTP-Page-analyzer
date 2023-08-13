@@ -1,5 +1,6 @@
 package hexlet.code;
 
+import hexlet.code.domain.query.QUrl;
 import io.ebean.Database;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -85,12 +86,29 @@ public final class MainTest {
         assertThat(response.getBody()).contains("fontanka");
 
         //GET page of [id=1] should be [yandex.ru]
-        response = Unirest.get("/urls/1").asString();
+        QUrl urlbean = QUrl.alias();
+        long yandexId = new QUrl()
+                .select(urlbean.id)
+                .name.equalTo("http://yandex.ru")
+                .findSingleAttribute();
+
+        response = Unirest.get("/urls/" + yandexId).asString();
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getBody()).contains("yandex.ru");
 
         //GET page of [id=3] should be error as only 2 rows were added be seed.sql
-        response = Unirest.get("/urls/3").asString();
+        long fontankaId = new QUrl()
+                .select(urlbean.id)
+                .name.equalTo("http://fontanka.ru")
+                .findSingleAttribute();
+
+        int randomId = 3;
+
+        while (randomId == yandexId || randomId == fontankaId) {
+            randomId = (int) (Math.random() * 10);
+        }
+
+        response = Unirest.get("/urls/" + randomId).asString();
         assertThat(response.getStatus()).isEqualTo(404);
 
     }
@@ -105,7 +123,13 @@ public final class MainTest {
         assertThat(getResponse.getBody()).contains("rambler.ru");
         assertThat(getResponse.getStatus()).isEqualTo(200);
 
-        HttpResponse<String> getResponse2 = Unirest.get("/urls/3").asString();
+        QUrl urlbean = QUrl.alias();
+        long ramblerId = new QUrl()
+                .select(urlbean.id)
+                .name.equalTo("http://rambler.ru")
+                .findSingleAttribute();
+
+        HttpResponse<String> getResponse2 = Unirest.get("/urls/" + ramblerId).asString();
         assertThat(getResponse2.getStatus()).isEqualTo(200);
         assertThat(getResponse2.getBody()).contains("rambler.ru");
     }
@@ -117,10 +141,21 @@ public final class MainTest {
         HttpResponse response = Unirest.post("/urls")
                 .field("url", mockUrl)
                 .asEmpty();
-        response = Unirest.post("/urls/3/checks")
+
+        //Remove "/" from the end of mockUrl, as DB contains name without "/" in the end.
+        mockUrl = mockUrl.substring(0, mockUrl.length() - 1);
+
+        QUrl urlbean = QUrl.alias();
+        long mockurlId = new QUrl()
+                .select(urlbean.id)
+                .name.equalTo(mockUrl)
+                .findSingleAttribute();
+
+        response = Unirest.post("/urls/" + mockurlId + "/checks")
                 .asEmpty();
-        HttpResponse<String> getResponse = Unirest.get("/urls/3").asString();
+        HttpResponse<String> getResponse = Unirest.get("/urls/" + mockurlId).asString();
         assertThat(getResponse.getBody()).contains("dummy h1");
         assertThat(getResponse.getBody()).contains("dummy description");
+        assertThat(getResponse.getStatus()).isEqualTo(200);
     }
 }

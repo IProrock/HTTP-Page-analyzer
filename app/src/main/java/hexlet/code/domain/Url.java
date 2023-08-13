@@ -39,29 +39,4 @@ public final class Url extends Model {
         return urlChecks;
     }
 
-//    public Instant getLatestCheck() {
-//        int listSize = urlChecks.size();
-//
-//        if (listSize == 0) {
-//            return null;
-//        }
-//
-//        UrlCheck latestCheck = urlChecks.get(listSize - 1);
-//        Instant latestCheckDate = latestCheck.getCreatedAt();
-//
-//        return latestCheckDate;
-//    }
-//
-//    public Integer getLatestStatus() {
-//        int listSize = urlChecks.size();
-//
-//        if (listSize == 0) {
-//            return null;
-//        }
-//
-//        UrlCheck latestCheck = urlChecks.get(listSize - 1);
-//        int latestCheckStatus = latestCheck.getStatusCode();
-//
-//        return latestCheckStatus;
-//    }
 }
