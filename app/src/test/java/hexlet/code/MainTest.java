@@ -86,29 +86,23 @@ public final class MainTest {
         assertThat(response.getBody()).contains("fontanka");
 
         //GET page of [id=1] should be [yandex.ru]
-        QUrl urlbean = QUrl.alias();
-        long yandexId = new QUrl()
-                .select(urlbean.id)
-                .name.equalTo("http://yandex.ru")
-                .findSingleAttribute();
+
+        long yandexId = getIdByName("http://yandex.ru");
 
         response = Unirest.get("/urls/" + yandexId).asString();
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getBody()).contains("yandex.ru");
 
         //GET page of [id=3] should be error as only 2 rows were added be seed.sql
-        long fontankaId = new QUrl()
-                .select(urlbean.id)
-                .name.equalTo("http://fontanka.ru")
-                .findSingleAttribute();
+        long fontankaId = getIdByName("http://fontanka.ru");
 
-        int randomId = 3;
+        int randomIdMissingInDb = 3;
 
-        while (randomId == yandexId || randomId == fontankaId) {
-            randomId = (int) (Math.random() * 10);
+        while (randomIdMissingInDb == yandexId || randomIdMissingInDb == fontankaId) {
+            randomIdMissingInDb = (int) (Math.random() * 10);
         }
 
-        response = Unirest.get("/urls/" + randomId).asString();
+        response = Unirest.get("/urls/" + randomIdMissingInDb).asString();
         assertThat(response.getStatus()).isEqualTo(404);
 
     }
@@ -124,10 +118,7 @@ public final class MainTest {
         assertThat(getResponse.getStatus()).isEqualTo(200);
 
         QUrl urlbean = QUrl.alias();
-        long ramblerId = new QUrl()
-                .select(urlbean.id)
-                .name.equalTo("http://rambler.ru")
-                .findSingleAttribute();
+        long ramblerId = getIdByName("http://rambler.ru");
 
         HttpResponse<String> getResponse2 = Unirest.get("/urls/" + ramblerId).asString();
         assertThat(getResponse2.getStatus()).isEqualTo(200);
@@ -145,11 +136,7 @@ public final class MainTest {
         //Remove "/" from the end of mockUrl, as DB contains name without "/" in the end.
         mockUrl = mockUrl.substring(0, mockUrl.length() - 1);
 
-        QUrl urlbean = QUrl.alias();
-        long mockurlId = new QUrl()
-                .select(urlbean.id)
-                .name.equalTo(mockUrl)
-                .findSingleAttribute();
+        long mockurlId = getIdByName(mockUrl);
 
         response = Unirest.post("/urls/" + mockurlId + "/checks")
                 .asEmpty();
@@ -157,5 +144,16 @@ public final class MainTest {
         assertThat(getResponse.getBody()).contains("dummy h1");
         assertThat(getResponse.getBody()).contains("dummy description");
         assertThat(getResponse.getStatus()).isEqualTo(200);
+    }
+
+    private static long getIdByName(String name) {
+
+        QUrl urlbean = QUrl.alias();
+        long id = new QUrl()
+                .select(urlbean.id)
+                .name.equalTo(name)
+                .findSingleAttribute();
+
+        return id;
     }
 }
