@@ -1,5 +1,6 @@
 package hexlet.code;
 
+import hexlet.code.controller.UrlController;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinThymeleaf;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
@@ -14,6 +15,7 @@ public class App {
     private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) {
+
         LOGGER.info("App.main entered");
         int port = getPort();
         LOGGER.info("App.main port received: " + port);

@@ -29,11 +29,11 @@ All results will be saved to DB so checks history will be available.
 **Build automation tool:** Gradle 8.2.1\
 **Web framework:** Javalin\
 **HTML Template engine:** Thymeleaf\
-**CSS framework:** Bootstrap 5\ WebJars
+**CSS framework:** Bootstrap 5\ WebJars\
 **ORM:** eBean\
 **Database:** PostgreSQL (for production) / H2 (for tests only)\
 **Test technologies:** JUnit framework / Unirest library / MockWebServer / slf4j library\
-**CI:** GithubActions / JaCoCo / Codeclimate\
+**CI:** GithubActions / JaCoCo / Codeclimate
 
 ## Setup
 

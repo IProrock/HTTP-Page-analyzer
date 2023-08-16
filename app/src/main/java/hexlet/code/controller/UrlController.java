@@ -1,4 +1,4 @@
-package hexlet.code;
+package hexlet.code.controller;
 
 import hexlet.code.domain.Url;
 import hexlet.code.domain.UrlCheck;
@@ -35,7 +35,7 @@ public class UrlController {
         URL urlInstance = null;
 
         try {
-            LOGGER.info("try to parse url string {}", urlString);
+            LOGGER.info("UrlController.addUrl: try to parse url string {}", urlString);
             urlInstance = new URL(urlString);
 
         } catch (Exception e) {
@@ -48,17 +48,17 @@ public class UrlController {
 
         String urlToAdd = urlInstance.getProtocol() + "://" + urlInstance.getAuthority();
 
-        LOGGER.info("Check if URL already exists {}", urlToAdd);
+        LOGGER.info("UrlController.addUrl: Check if URL already exists {}", urlToAdd);
 
         if (isAlreadyExists(urlToAdd)) {
-            LOGGER.info("URL Already exists: '{}'", urlToAdd);
+            LOGGER.info("UrlController.addUrl: URL Already exists: '{}'", urlToAdd);
             ctx.sessionAttribute("flash", "Страница уже существует");
             ctx.sessionAttribute("flashType", "danger");
             ctx.redirect("/");
             return;
         }
 
-        LOGGER.info("URL is new, will try to add to DB: {}", urlToAdd);
+        LOGGER.info("UrlController.addUrl: URL is new, will try to add to DB: {}", urlToAdd);
         Url nurl = new Url(urlToAdd);
         nurl.save();
         ctx.sessionAttribute("flash", "Страница успешно добавлена");
@@ -113,7 +113,7 @@ public class UrlController {
     //GET [/urls/{id}]
     public static Handler showId = ctx -> {
 
-        LOGGER.info("Controllers.showId entered");
+        LOGGER.info("UrlController.showId entered");
 
         Long id = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
 
@@ -126,13 +126,13 @@ public class UrlController {
         }
 
         ctx.sessionAttribute("url", urlId);
-        ctx.render("showId.html");
+        ctx.render("show.html");
     };
 
     //POST [/urls/{id}/checks]
     public static Handler urlCheckRequest = ctx -> {
 
-        LOGGER.info("Controllers.urlCheckRequest entered");
+        LOGGER.info("UrlController.urlCheckRequest entered");
 
         long idUrl = ctx.pathParamAsClass("id", Long.class).getOrDefault(null);
         Url urlToCheck = new QUrl()
@@ -141,22 +141,22 @@ public class UrlController {
 
 
         try {
-            LOGGER.info("Controllers.urlChechReques - HTTP request by Unirest started");
+            LOGGER.info("UrlController.urlChechReques - HTTP request by Unirest started");
             HttpResponse<String> response = Unirest.get(urlToCheck.getName()).asString();
             int statusCode = response.getStatus();
             String body = response.getBody();
             Document doc = Jsoup.parse(body);
 
             String title = doc.title();
-            LOGGER.info("Controllers.urlCheckRequest - parsed title: " + title);
+            LOGGER.info("UrlController.urlCheckRequest - parsed title: " + title);
 
             Element h1Elm = doc.select("h1").first();
             String h1str = (h1Elm == null ? "h1 tag missing" : h1Elm.text());
-            LOGGER.info("Controllers.urlCheckRequest - parsed h1 tag: " + h1str);
+            LOGGER.info("UrlController.urlCheckRequest - parsed h1 tag: " + h1str);
 
             Element descElm = doc.select("meta[name=description]").first();
             String descStr = (descElm == null ? "No description" : descElm.attr("content"));
-            LOGGER.info("Controllers.urlCheckRequest - parsed description: " + descStr);
+            LOGGER.info("UrlController.urlCheckRequest - parsed description: " + descStr);
 
             UrlCheck urlCheckAdd = new UrlCheck(statusCode, title, h1str, descStr, urlToCheck);
             urlCheckAdd.save();
@@ -178,7 +178,7 @@ public class UrlController {
     };
 
     private static boolean isAlreadyExists(String urlToAdd) {
-        LOGGER.info("Controllers.ifAlreadyExists: Check if exists '{}'", urlToAdd);
+        LOGGER.info("UrlController.ifAlreadyExists: Check if exists '{}'", urlToAdd);
         boolean isExists = new QUrl()
                 .name.equalTo(urlToAdd)
                 .exists();

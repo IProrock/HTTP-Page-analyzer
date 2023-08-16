@@ -1,6 +1,8 @@
 package hexlet.code;
 
+import hexlet.code.domain.UrlCheck;
 import hexlet.code.domain.query.QUrl;
+import hexlet.code.domain.query.QUrlCheck;
 import io.ebean.Database;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
@@ -117,7 +119,6 @@ public final class MainTest {
         assertThat(getResponse.getBody()).contains("rambler.ru");
         assertThat(getResponse.getStatus()).isEqualTo(200);
 
-        QUrl urlbean = QUrl.alias();
         long ramblerId = getIdByName("http://rambler.ru");
 
         HttpResponse<String> getResponse2 = Unirest.get("/urls/" + ramblerId).asString();
@@ -144,6 +145,17 @@ public final class MainTest {
         assertThat(getResponse.getBody()).contains("dummy h1");
         assertThat(getResponse.getBody()).contains("dummy description");
         assertThat(getResponse.getStatus()).isEqualTo(200);
+
+        //Check if DB contains all data that it should
+        UrlCheck actualUrlCheck = new QUrlCheck()
+                .url.id.equalTo(mockurlId)
+                .orderBy()
+                .createdAt.desc()
+                .findOne();
+
+        assertThat(actualUrlCheck.getH1()).isEqualTo("dummy h1");
+        assertThat(actualUrlCheck.getDescription()).isEqualTo("dummy description");
+        assertThat(actualUrlCheck.getTitle()).isEqualTo("dummy title");
     }
 
     private static long getIdByName(String name) {
